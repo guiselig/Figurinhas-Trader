@@ -59,12 +59,12 @@ A mobile app to organize, manage, and trade World Cup 2026 Panini stickers with 
 │  • OpenCage API (Geocoding)             │
 │  • RevenueCat (In-app Purchases)        │
 │  • Google AdMob (Ads)                   │
-│  • Expo Push Notifications              │
+│  • FCM + APNs (Push Notifications)      │
 ├─────────────────────────────────────────┤
-│      N8N Automation (AWS EC2)           │
-│  • Automatic matching                   │
-│  • Scheduled notifications              │
-│  • Data cleanup                         │
+│    Home Server Docker (i5-4460)         │
+│  • N8N Automation (workflows)           │
+│  • PostHog (self-hosted analytics)      │
+│  • Cloudflare Tunnel (public URLs)      │
 └─────────────────────────────────────────┘
 ```
 
@@ -82,7 +82,7 @@ A mobile app to organize, manage, and trade World Cup 2026 Panini stickers with 
 
 **1. Clone the repository**
 ```bash
-git clone https://github.com/your-user/figurinha-trader.git
+git clone https://github.com/guiselig/figurinha-trader.git
 cd figurinha-trader
 ```
 
@@ -101,23 +101,17 @@ Fill in with your credentials:
 # Supabase
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_KEY=your-service-key
 
-# Google OAuth
-GOOGLE_OAUTH_CLIENT_ID=your-client-id.apps.googleusercontent.com
-
-# Apple
-APPLE_TEAM_ID=your-team-id
-
-# APIs
-OPENCAGE_API_KEY=your-api-key
+# RevenueCat
 REVENUECAT_API_KEY=your-api-key
 
-# N8N (production)
-N8N_HOST=your-aws-ec2-public-ip.ec2.amazonaws.com
-N8N_PORT=5678
+# PostHog (self-hosted)
+POSTHOG_HOST=https://posthog.yourdomain.com
+POSTHOG_API_KEY=phc_your-posthog-api-key
+
+# N8N (home server via Cloudflare Tunnel)
+N8N_HOST=https://n8n.yourdomain.com
 N8N_API_KEY=your-api-key
-N8N_ENCRYPTION_KEY=your-random-secret-key
 ```
 
 **4. Start the development server**
@@ -169,8 +163,7 @@ figurinha-trader/
 │   ├── components/               # Reusable components
 │   ├── hooks/                    # Custom hooks
 │   ├── services/                 # Supabase, APIs
-│   ├── utils/                    # Helpers
-│   └── app.json                  # Expo configuration
+│   └── utils/                    # Helpers
 │
 ├── db/                           # Migrations and seed
 │   ├── migrations/
@@ -178,15 +171,11 @@ figurinha-trader/
 │
 ├── n8n/                          # N8N Workflows
 │   ├── auto-match.json
-│   ├── scheduled-notifications.json
+│   ├── meetup-reminders.json
 │   └── ...
 │
-├── docs/                         # Documentation
-│   ├── FEATURES.md
-│   ├── API.md
-│   └── DEVELOPMENT.md
-│
 ├── .env.example                  # Variables template
+├── PLANO_COMPLETO.md             # Full project plan
 ├── app.json                      # Expo config
 ├── package.json
 ├── tsconfig.json
@@ -200,33 +189,39 @@ figurinha-trader/
 ### Main Tables
 
 **profiles**
-- user_id, username, bio, avatar_url, city, created_at
+- user_id, username, bio, avatar_url, city, premium_status, created_at
 
-**albums**
-- user_id, figurinha_number, status (have/missing/repeated), quantity
+**stickers**
+- id, number, name, team_id, image_url
 
-**collections** (custom collections)
-- user_id, name, stickers_array
+**user_stickers**
+- user_id, sticker_id, quantity_owned, quantity_needed
 
-**listings** (trading posts)
-- user_id, sticker_offering, sticker_wanted, location, is_premium
+**trades**
+- id, user_id, offering_sticker_id, wanted_sticker_id, status, location
 
-**conversations** (chats)
-- user_id_1, user_id_2, listing_id, last_message_at
-
-**messages**
-- conversation_id, sender_id, content, created_at
+**trade_messages**
+- trade_id, sender_id, content, created_at
 
 **meetups**
-- user_id, name, location, date, time, confirmed_count
+- id, user_id, name, location, date, time
 
-**confirmations**
+**meetup_attendees**
 - meetup_id, user_id, confirmed_at
+
+**establishments**
+- id, name, location, is_verified, pin_type (free/verified)
 
 **ratings**
 - reviewer_id, reviewed_id, stars, comment
 
-See `Figurinha_Trader_Planejamento.docx` for the complete schema.
+**push_tokens**
+- user_id, token, platform (ios/android)
+
+**subscriptions**
+- user_id, revenuecat_id, plan, expires_at
+
+See [PLANO_COMPLETO.md](PLANO_COMPLETO.md) for the complete schema with all 13 tables.
 
 ---
 
@@ -237,12 +232,12 @@ See `Figurinha_Trader_Planejamento.docx` for the complete schema.
 | AI Scan | 30/day | Unlimited |
 | Listings | ✓ | ✓ + featured |
 | Chat | ✓ | ✓ + notifications |
-| Map | View | View + Create |
+| Map | View | View + Create Meetups |
 | Auto match | — | ✓ |
 | Push Notifications | Basic | Realtime |
 | Ad-free | — | ✓ |
 
-**Premium Price:** R$ 14.90/month (RevenueCat)
+**Premium Price:** R$ 9.90/month or R$ 79.90/year (RevenueCat)
 
 ---
 
@@ -254,47 +249,57 @@ See `Figurinha_Trader_Planejamento.docx` for the complete schema.
 - **Realtime:** WebSocket for chat
 - **Storage:** 1GB for avatars/photos
 
-### N8N (AWS EC2 Free Tier)
-- **Server:** t2.micro EC2 instance (1 vCPU, 1GB RAM) — free tier eligible
-- **Cost:** $0 for 12 months (then ~$6-10/month)
-- **Workflows:**
-  - Daily automatic matching
-  - Scheduled notifications
-  - Old data cleanup
-  - Reports
+### Home Server (i5-4460, Ubuntu + Docker)
+
+All automation and analytics run on a home desktop server at zero cloud cost:
+
+**N8N (workflow automation):**
+- Trade automatic matching
+- Meetup reminders (1h before)
+- Subscription sync (RevenueCat webhook)
+- Anti-fraud monitoring
+- Weekly admin reports via Telegram
+
+**PostHog (self-hosted analytics):**
+- User events & conversion funnels
+- Retention analysis
+- Session recording
+- Feature flags & A/B testing
+- Error tracking
+
+**Cloudflare Tunnel:** Free public HTTPS URLs for all home server services — no static IP required.
+
+### Push Notifications
+- **Firebase Cloud Messaging (FCM):** Android push delivery
+- **Apple Push Notification Service (APNs):** iOS push delivery
+- **Expo Push Service:** Unified API over FCM + APNs
 
 ### Other APIs
-- **Google ML Kit:** On-device (no cost)
+- **Google ML Kit:** On-device sticker scanning (no cost)
 - **OpenCage:** Geocoding (2.5k reqs/day free)
 - **RevenueCat:** In-app purchases (free up to 10k MAU)
 - **Google AdMob:** Monetization (free)
 
-**Total cost:** $0-10/month (initial phase)
+**Total monthly cost:** ~R$100 (electricity + MEI DAS only)
 
 ---
 
 ## 🧪 Testing
 
 ```bash
-# Unit tests
-npm run test
+# TypeScript validation
+npx tsc --noEmit
 
-# Integration tests
-npm run test:integration
-
-# Build test
-eas build --platform ios --local
+# Build test (Android local)
+eas build --platform android --local
 ```
 
 ---
 
 ## 📚 Documentation
 
-- **[FEATURES.md](docs/FEATURES.md)** — Full feature list
-- **[API.md](docs/API.md)** — Supabase endpoints and functions
-- **[DEVELOPMENT.md](docs/DEVELOPMENT.md)** — Contributor guide
-- **[Figurinha_Trader_Planejamento.docx](Figurinha_Trader_Planejamento.docx)** — Full product spec
-- **[Figurinha_Trader_Cronograma.xlsx](Figurinha_Trader_Cronograma.xlsx)** — 66 development tasks
+- **[PLANO_COMPLETO.md](PLANO_COMPLETO.md)** — Full project plan, AI automation system, costs, architecture
+- **[.env.example](.env.example)** — Environment variables reference
 
 ---
 
@@ -322,6 +327,11 @@ eas build --platform ios --local
 2. Connect Apple App Store and Google Play
 3. Copy the API key to `.env.local`
 
+### PostHog (self-hosted)
+1. Install via Docker Compose on your home server
+2. Configure Cloudflare Tunnel for public HTTPS access
+3. Create a project and copy the API key to `.env.local`
+
 ---
 
 ## 🚀 Deploy
@@ -335,16 +345,6 @@ eas submit --platform ios --latest
 ```bash
 eas submit --platform android --latest
 ```
-
----
-
-## 📊 Timeline
-
-**Start:** 04/04/2026
-**Duration:** 17 days
-**Deadline:** 04/20/2026 (store submission)
-
-See [Figurinha_Trader_Cronograma.xlsx](Figurinha_Trader_Cronograma.xlsx) for the detailed timeline with 66 tasks.
 
 ---
 
@@ -367,7 +367,6 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 **Guilherme Selig**
 📧 guiselig10@gmail.com
-🐙 [@your-github](https://github.com)
 
 ---
 
@@ -378,13 +377,8 @@ MIT License — see [LICENSE](LICENSE) for details.
 - [Google ML Kit](https://developers.google.com/ml-kit) — On-device AI
 - [MapLibre](https://maplibre.org) — Open-source maps
 - [N8N](https://n8n.io) — Workflow automation
+- [PostHog](https://posthog.com) — Open-source analytics
 
 ---
 
-## 📖 Full Setup
-
-See **[AWS_SETUP.md](AWS_SETUP.md)** for the step-by-step guide on setting up the AWS infrastructure (EC2, Security Groups, N8N, Docker).
-
----
-
-**Last updated:** 04/04/2026
+**Last updated:** 04/18/2026

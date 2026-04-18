@@ -2,7 +2,7 @@
 
 Documentação definitiva de automação, infraestrutura, arquitetura e desenvolvimento.
 
-**Versão:** 1.0 | **Status:** Pronto para Execução | **Data:** Abril 2026
+**Versão:** 1.1 | **Status:** Pronto para Execução | **Data:** Abril 2026
 
 ---
 
@@ -24,6 +24,7 @@ Documentação definitiva de automação, infraestrutura, arquitetura e desenvol
 SERVIDOR CASEIRO (i5-4460, Ubuntu)
 ├── Orchestrator Python (IA automation)
 ├── n8n (automações de produção)
+├── PostHog (analytics self-hosted)
 └── Cloudflare Tunnel (acesso externo)
        ↕
 GOOGLE CLOUD (Vertex AI)
@@ -39,6 +40,15 @@ GITHUB (repositório)
 MACBOOK PRO
 └── Testes iOS + certificados (manual)
 ```
+
+### Cloudflare Tunnel — Acesso Externo Seguro
+
+Roda no servidor caseiro, expõe serviços via URL pública sem IP estático:
+
+| Serviço | URL pública |
+|---|---|
+| n8n | https://n8n.figurinhatrader.com.br |
+| PostHog | https://posthog.figurinhatrader.com.br |
 
 ---
 
@@ -94,12 +104,12 @@ Uma base de código, duas plataformas:
 
 ### Todas as Telas
 
-**Auth:** Login, Cadastro, Recuperação de Senha, Onboarding  
-**Abas:** Home (Feed), Mapa, Scan IA, Meu Álbum (980 figurinhas), Perfil  
-**Trocas:** Criar, Detalhar, Chat, Minhas Ofertas  
-**Meetups:** Criar (premium), Detalhar, Confirmar Presença  
-**Premium:** Paywall, Confirmação  
-**Settings:** Notificações, Privacidade, Termos, Deletar Conta (LGPD)  
+**Auth:** Login, Cadastro, Recuperação de Senha, Onboarding
+**Abas:** Home (Feed), Mapa, Scan IA, Meu Álbum (980 figurinhas), Perfil
+**Trocas:** Criar, Detalhar, Chat, Minhas Ofertas
+**Meetups:** Criar (premium), Detalhar, Confirmar Presença
+**Premium:** Paywall, Confirmação
+**Settings:** Notificações, Privacidade, Termos, Deletar Conta (LGPD)
 
 ### Backend Completo
 
@@ -113,10 +123,10 @@ Uma base de código, duas plataformas:
 
 1. **Premium (RevenueCat)** → R$9,90/mês ou R$79,90/ano
    - Scan ilimitado, criar meetups, sem anúncios
-   
+
 2. **Anúncios (AdMob)** → R$0,50–1,50 CPM
    - Banner sutil + 1 interstitial por sessão (free tier apenas)
-   
+
 3. **Verified Pins (B2B)** → R$29,90–49,90/mês
    - Papelarias/bancas pagam para aparecer no mapa com pino dourado
 
@@ -139,10 +149,14 @@ Rodando 24/7 no servidor caseiro via Docker:
 Você faz uma única vez:
 
 - Criar projeto GCP, ativar US$300 créditos
-- Criar contas: Supabase, Expo, RevenueCat, AdMob, Firebase, OpenCage, Cloudflare
+- Criar contas: Supabase, Expo, RevenueCat, AdMob, OpenCage, Cloudflare
 - Pagar: Google Play (US$25), Apple Developer (US$99)
 - Instalar Ubuntu no desktop, Docker, Python, Node
-- Instalar Cloudflare Tunnel
+- Configurar Docker Compose no servidor caseiro:
+  - n8n (automações de produção)
+  - PostHog (analytics self-hosted)
+- Instalar Cloudflare Tunnel e configurar URLs públicas
+- Criar projeto Firebase (somente FCM para push notifications — sem Analytics)
 - Clonar repositório e autenticar
 - Salvar TODAS credenciais no Secret Manager
 - Gerar certificados iOS (MacBook)
@@ -211,7 +225,7 @@ npx eas submit --platform android --latest
 npx eas submit --platform ios --latest
 ```
 
-Google Play: revisão 1–3 dias  
+Google Play: revisão 1–3 dias
 App Store: revisão 2–7 dias
 
 ### Dias 6–10 — Período de Revisão
@@ -256,7 +270,7 @@ Disponível para download em todo o Brasil nas lojas oficiais.
 | Item | Custo |
 |---|---|
 | MEI DAS | ~R$70 |
-| Tudo o mais (Supabase free, n8n self-hosted, etc.) | R$0 |
+| Supabase, n8n self-hosted, PostHog self-hosted | R$0 |
 | Eletricidade servidor | ~R$30 |
 | **Total mensal** | **~R$100** |
 
@@ -286,7 +300,7 @@ Disponível para download em todo o Brasil nas lojas oficiais.
 
 ### Notificações
 - Expo Push Service
-- Firebase Cloud Messaging (Android)
+- Firebase Cloud Messaging (Android — push notifications apenas)
 - Apple Push Notifications (iOS)
 
 ### Monetização
@@ -303,11 +317,15 @@ Disponível para download em todo o Brasil nas lojas oficiais.
 - EAS Build & Submit
 
 ### Automação
-- n8n (self-hosted)
+- n8n (self-hosted, servidor caseiro)
 
-### Analytics
-- Firebase Analytics
-- Firebase Crashlytics
+### Analytics & Monitoramento
+- PostHog (self-hosted, servidor caseiro)
+  - Eventos de uso e funis de conversão
+  - Retenção de usuários
+  - Session recording
+  - Feature flags e A/B testing
+  - Error tracking
 
 ### Legal
 - iubenda (LGPD)
@@ -360,6 +378,8 @@ Disponível para download em todo o Brasil nas lojas oficiais.
 ## ✅ CHECKLIST FINAL
 
 - [ ] Dia 0: Setup manual 100% completo
+- [ ] Dia 0: Docker Compose rodando (n8n + PostHog)
+- [ ] Dia 0: Cloudflare Tunnel configurado (n8n + PostHog com URLs públicas)
 - [ ] Dia 0: Todas as credenciais no Secret Manager
 - [ ] Dia 0: Orquestrador testado localmente
 - [ ] Dia 1: `sudo systemctl start figurinha-orchestrator`
