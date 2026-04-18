@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-04-18T14:00:00Z" agent="Claude" version="24.0.0" type="device">
+  <diagram id="system_architecture" name="Figurinha Trader">
+    <mxGraphModel dx="2400" dy="1600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1400" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- TITULO -->
+        <mxCell id="title" value="FIGURINHA TRADER - ARQUITETURA COMPLETA" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#000;" vertex="1" parent="1">
+          <mxGeometry x="50" y="10" width="1900" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- CAMADA 1: ORQUESTRACAO IA -->
+        <mxCell id="sec1" value="CAMADA 1: ORQUESTRACAO IA (VERTEX AI)" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#fff;backgroundColor=#1a237e;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="50" y="60" width="1900" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="gemini" value="GEMINI 3.1 PRO&#10;- Cerebro&#10;- tasks.json&#10;- 3 workers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f57f17;strokeWidth=3;fontSize=10;align=center;padding=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="100" width="180" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="opus" value="CLAUDE OPUS 4.7&#10;- Desenvolvedor&#10;- write_file()&#10;- bash_exec()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#01579b;strokeWidth=3;fontSize=10;align=center;padding=10;" vertex="1" parent="1">
+          <mxGeometry x="290" y="100" width="180" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="secret" value="SECRET MGR&#10;- Credenciais&#10;- APIs seguras&#10;- Carregado 1x" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#6a1b9a;strokeWidth=3;fontSize=10;align=center;padding=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="100" width="180" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="github_repo" value="GITHUB REPO&#10;- tasks.json&#10;- state.json&#10;- Auto-commits" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;strokeWidth=3;fontSize=10;align=center;padding=10;" vertex="1" parent="1">
+          <mxGeometry x="710" y="100" width="180" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- CAMADA 2: APP MOBILE -->
+        <mxCell id="sec2" value="CAMADA 2: APP MOBILE (REACT NATIVE + EXPO)" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#fff;backgroundColor=#0d47a1;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="50" y="240" width="1900" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="screens" value="TELAS&#10;- Auth&#10;- Tabs&#10;- Trades&#10;- Meetup&#10;- Premium" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#0d47a1;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="280" width="140" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="services" value="SERVICES&#10;- useAuth()&#10;- useTrades()&#10;- useLocation()&#10;- usePremium()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#81c784;strokeColor=#1b5e20;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="250" y="280" width="140" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="zustand" value="ZUSTAND STATE&#10;- Auth&#10;- Trades&#10;- Location&#10;- Cache" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#1b5e20;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="420" y="280" width="140" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="supa_client" value="SUPABASE CLIENT&#10;- Auth&#10;- Realtime&#10;- DB queries&#10;- Storage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ce93d8;strokeColor=#6a1b9a;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="590" y="280" width="140" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="posthog_app" value="POSTHOG SDK&#10;- Events&#10;- Screen views&#10;- Error track" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#01579b;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="760" y="280" width="140" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- CAMADA 3: BACKEND -->
+        <mxCell id="sec3" value="CAMADA 3: BACKEND (SUPABASE HOSTED)" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#fff;backgroundColor=#c41c3b;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="50" y="400" width="1900" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db" value="PostgreSQL&#10;13 tabelas&#10;- profiles&#10;- stickers&#10;- trades" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#b71c1c;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="440" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="auth_backend" value="AUTH&#10;Email + OAuth&#10;JWT tokens" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#b71c1c;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="230" y="440" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="realtime_ws" value="REALTIME&#10;WebSocket&#10;Chat &lt;100ms" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#b71c1c;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="380" y="440" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="edge_func" value="EDGE FUNCTIONS&#10;- match()&#10;- sync()&#10;- anti_fraud()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#b71c1c;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="530" y="440" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="storage_db" value="STORAGE&#10;1GB&#10;CDN public" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#b71c1c;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="680" y="440" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rls" value="ROW LEVEL&#10;SECURITY&#10;100% enforced" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#1b5e20;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="830" y="440" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- CAMADA 4: INFRAESTRUTURA -->
+        <mxCell id="sec4" value="CAMADA 4: INFRAESTRUTURA (SERVIDOR CASEIRO + CLOUD)" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#fff;backgroundColor=#005a04;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="50" y="560" width="1900" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="server_home" value="HOME SERVER&#10;i5-4460&#10;Docker" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcedc8;strokeColor=#33691e;strokeWidth=3;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="600" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n8n_box" value="n8n&#10;(Port 5678)&#10;- Matching&#10;- Reminders" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f57f17;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="230" y="600" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="posthog_box" value="POSTHOG&#10;(Port 8000)&#10;- Events&#10;- Funnels" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#01579b;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="380" y="600" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cloudflare_box" value="CLOUDFLARE&#10;TUNNEL&#10;- HTTPS auto&#10;- Free" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#6a1b9a;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="530" y="600" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="gcp_box" value="GOOGLE CLOUD&#10;Vertex AI&#10;- Gemini&#10;- Opus" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f57f17;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="680" y="600" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- CAMADA 5: MONETIZACAO -->
+        <mxCell id="sec5" value="CAMADA 5: MONETIZACAO amp; NOTIFICACOES" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#fff;backgroundColor=#d32f2f;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="50" y="720" width="1900" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rc_box" value="REVENUECAT&#10;R$9,90/mes&#10;R$79,90/ano" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffccbc;strokeColor=#d84315;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="760" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="fcm_box" value="FIREBASE FCM&#10;Android Push&#10;Free unlimited" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#0d47a1;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="230" y="760" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="apns_box" value="APPLE APNs&#10;iOS Push&#10;Free unlimited" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#0d47a1;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="380" y="760" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="admob_box" value="GOOGLE AdMob&#10;R$0.50-1.50 CPM&#10;Banner + Inter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f57f17;strokeWidth=2;fontSize=10;align=center;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="530" y="760" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- FLUXOS -->
+        <mxCell id="flows" value="FLUXOS CRITICOS: (1) SCAN: ML Kit on-device | (2) TRADE: Supabase + n8n match | (3) PREMIUM: RevenueCat sync | (4) REMINDER: n8n schedule | (5) ANALYTICS: PostHog events | (6) ORCHESTRATOR: Gemini + Opus" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontFamily=monospace;backgroundColor=#fffde7;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="50" y="890" width="1900" height="60" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
